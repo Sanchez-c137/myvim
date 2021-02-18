@@ -1,3 +1,10 @@
+"兼容vi
+set nocompatible
+"识别文件格式
+filetype on
+filetype indent on
+filetype plugin on
+filetype plugin indent on
 "解决中文乱码
 set fileencodings=utf-8,gb2312,gb18030,gbk,ucs-bom,cp936,latin1
 set enc=utf8
@@ -36,7 +43,35 @@ set smartcase
 noremap n nzz
 noremap N Nzz
 
-"插件安装
+"分屏（注意输入s时要马上指定方向，不然会触发vim中其他命令）
+"向上
+map sk :set nosplitbelow<CR>:split<CR>
+"向下
+map sj :set splitbelow<CR>:split<CR>
+"向左
+map sh :set nosplitright<CR>:vsplit<CR>
+"向右
+map sl :set splitright<CR>:vsplit<CR>
+"在不同分屏之间移动，因为我用的是普通的键盘布局，所以就直接用空格键代替Ctrl+w了
+map <LEADER> <C-w>
+"调整分屏大小（要注意，只有当光标所在屏在左边或下边时操作逻辑才是顺方向的在另两屏是反的）
+map zk :res +5<CR>
+map zj :res -5<CR>
+map zh :vertical resize-5<CR>
+map zl :vertical resize+5<CR>
+"在垂直分屏和水平分屏之间切换
+"垂直
+map sz <C-w>t<C-w>H 
+"水平
+map sp <C-w>t<C-w>K 
+
+"标签管理（在不退出vim并相对全屏的打开一个新文件）
+map <C-n> :tabe<CR>>
+map nl :+tabnext<CR>
+map nh :-tabnext<CR>
+map nc :tabclose<CR>
+
+""插件安装
 call plug#begin('~/.vim/plugged')
 
 Plug 'vim-airline/vim-airline'
