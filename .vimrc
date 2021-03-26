@@ -9,13 +9,30 @@ filetype plugin indent on
 let &t_ut=''
 "可以在vim中使用鼠标
 set mouse=a
-"设置底部状态栏的大小(安装vim-airline插件才有状态栏）
+"永远显示底部状态栏(安装vim-airline插件才有状态栏）
 set laststatus=2
+ " 支持 powerline 字体
+let g:airline_powerline_fonts = 1 
+" 显示窗口tab和buffer
+"let g:airline#extensions#tabline#enabled = 1 
 "设置当前目录为工作目录
 set autochdir
 "每次打开vim自动回到上一次编辑的位置
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+"让状态栏有更多的图标
+if !exists('g:airline_symbols')
+let g:airline_symbols = {}
+endif
+let g:airline_left_sep = '▶'
+let g:airline_left_alt_sep = '❯'
+let g:airline_right_sep = '◀'
+let g:airline_right_alt_sep = '❮'
+let g:airline_symbols.linenr = '¶'
+let g:airline_symbols.branch = '⎇'
 "让光标在不同模式下有同样式
+let &t_SI.="\e[5 q" "插入模式
+let &t_SR.="\e[4 q" "替换模式
+let &t_EI.="\e[1 q" "普通模式
 
 "解决中文乱码
 set fileencodings=utf-8,gb2312,gb18030,gbk,ucs-bom,cp936,latin1
@@ -76,8 +93,8 @@ map zl :vertical resize+5<CR>
 map gz <C-w>t<C-w>H 
 "水平
 map gf <C-w>t<C-w>K 
-"在普通模式下按p可以退出vim
-map q :q<CR>
+"在普通模式下按z可以退出vim
+map Z :q<CR>
 "标签管理（在不退出vim并相对全屏的打开一个新文件）
 map <C-n> :tabe<CR>>
 map nl :+tabnext<CR>
@@ -87,6 +104,12 @@ map nc :tabclose<CR>
 map tf :NERDTreeFind<CR>
 map tr :NERDTree<CR>
 map tt :NERDTreeToggle<CR>
+"按lf搜索当前目录下的文件
+map lf :LeaderfFile<CR>
+"按ll搜索当前文件中有的某个单词
+map ll :LeaderfLine<CR>
+"按lc搜索当前文件里的函数
+map lc :LeaderfFunction<CR>
 "在不同模式下使用不同的光标样式
 "let &t_SI = "\<Esc>]50;CursorShape=1\x7"
 "let &t_SR = "\<Esc>]50;CursorShape=2\x7"
@@ -98,6 +121,8 @@ call plug#begin('~/.vim/plugged')
 
 "设置状态栏
 Plug 'vim-airline/vim-airline'
+"状态栏配色
+Plug 'vim-airline/vim-airline-themes'
 "配色方案
 Plug 'connorholyday/vim-snazzy'
 "使用文件树
@@ -115,11 +140,41 @@ Plug 'iamcco/markdown-preview.vim'
 Plug 'gcmt/wildfire.vim'
 "选中代码块可以用S来让两段包裹一个特定标点符号，也可以用cs来更改标点符号
 "Plug 'tpope/vim-surround'
+"使用LeaderF
+Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
+"显示缩进对齐
+Plug'nathanaelkane/vim-indent-guides'
+"代码片段补全
+Plug 'SirVer/ultisnips'
+"默认代码仓库
+"Plug 'keelii/vim-snippets'
+"我的代码仓库
+Plug 'Sanchez-c137/pianduan'
+"符号自动补全
+Plug 'jiangmiao/auto-pairs'
 
 call plug#end()
 
 
-
+"配置auto-pairs插件
+let g:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'",'"':'"', '<':'>'}
+"配置UltiSnips插件
+let g:UltiSnipsExpandTrigger="<tab>"
+" 使用 tab 切换下一个触发点，shit+tab 上一个触发点
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<S-tab>"
+" 使用 UltiSnipsEdit 命令时垂直分割屏幕
+let g:UltiSnipsEditSplit="vertical"
+"指定代码仓库路径
+let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/plugged/pianduan/Ultisnips']
+"按gu可以显示出对齐线
+map gu :IndentGuidesEnable<CR>
+"按ug可以取消显示对齐线
+map gu :IndentGuidesDisable<CR>
+"让显示缩进对齐的线的宽度为1
+let g:indent_guides_guide_size=1
+"显示对齐线的缩进级别
+let g:indent_guides_start_level = 1 
 "在普通模式下按F8在浏览器实时浏览正在编辑的Markdown文档
 nmap <silent> <F8> <Plug>MarkdownPreview        " for normal mode
 "在编辑模式下按F8在浏览器实时浏览正在编辑的Markdown文档
@@ -136,11 +191,12 @@ imap <silent> <F9> <Plug>StopMarkdownPreview        " for normal mode
 "	\'coc-vimlsp'
 	"coc插件搜索插件
 "	\'coc-marketplace'
+	"C语言补全支持	
+"	\'coc-ccls']
 
 
+"B
 "让光标所在行的线占满一行，比较美观
 color snazzy
 "在一些透明终端下vim也可以让背景透明
 let g:SnazzyTransparent = 1
-color desert
-
